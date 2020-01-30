@@ -1,0 +1,177 @@
+
+//#include <iostream>
+//#include <cstdio>
+//
+//
+//using namespace std;
+//
+//int main(){
+//    return 0;
+//}
+#include <iostream>
+#include <cstdio>
+#define SIZE 1000001
+#define N 8*SIZE
+using namespace std;
+
+int n,a,b,c,lcp[N],s[N],r[N],len[8],t;
+char ch[N],ch1[8][SIZE];
+
+struct data
+{
+    int index,flag,r1,r2;
+} arr[N];
+bool cmp(data a,data b)
+{
+    return a.r1==b.r1?a.r2<b.r2:a.r1<b.r1;
+}
+void mergeFunction(int left,int mid,int right)
+{
+    int l1=left,l2=mid+1,rCount=0;
+    data arr1[right-left+2];
+    while(l1<=mid&&l2<=right)
+    {
+        if(cmp(arr[l1],arr[l2]))
+        {
+            arr1[rCount++]=arr[l1++];
+        }
+        else
+            arr1[rCount++]=arr[l2++];
+    }
+    while(l1<=mid)
+        arr1[rCount++]=arr[l1++];
+    while(l2<=right)
+        arr1[rCount++]=arr[l2++];
+    for(int i=0,j=left; j<=right; i++,j++)
+        arr[j]=arr1[i];
+}
+void sortFunction(int left,int right)
+{
+    if(left==right)
+        return ;
+    int mid=(left+right)>>1;
+    sortFunction(left,mid);
+    sortFunction(mid+1,right);
+    mergeFunction(left,mid,right);
+}
+void buildSuffixArray()
+{
+    n=0;
+    int k;
+    for(int i=0; i<t; i++)
+    {
+        k=0;
+        while(ch1[i][k]!='\0')
+        {
+            arr[n].flag=i;
+            len[i]=n;
+            ch[n++]=ch1[i][k];
+            k++;
+
+        }
+    }
+    ch[n]='\0';
+   // cout<<n<<" "<<ch<<endl;
+    for(int i=0; i<n; i++)
+    {
+        arr[i].index=i;
+        arr[i].r1=ch[i];
+        arr[i].r2=(i+1)<n?ch[i+1]:-1;
+    }
+    sortFunction(0,n-1);
+    int prev,rCount,t;
+    for(k=2; k<n; k=k*2)
+    {
+        prev=arr[0].r1;
+        arr[0].r1=0;
+        s[arr[0].index]=0;
+        rCount=0;
+        for(int i=1; i<n; i++)
+        {
+            if(arr[i].r1==prev&&arr[i].r2==arr[i-1].r2)
+                arr[i].r1=rCount;
+            else
+            {
+                prev=arr[i].r1;
+                arr[i].r1=++rCount;
+            }
+            s[arr[i].index]=i;
+        }
+        for(int i=0; i<n; i++)
+        {
+            t=arr[i].index+k/2;
+            arr[i].r2=t<n?arr[s[t]].r1:-1;
+        }
+        sortFunction(0,n-1);
+    }
+    for(int i=0; i<n; i++)
+        s[i]=arr[i].index;
+
+}
+void buildLCPArray()
+{
+    for(int i=0; i<n; i++)
+    {
+        r[s[i]]=i;
+        lcp[i]=0;
+    }
+    int k=0,j;
+    for(int i=0; i<n; i++,k>0?k--:k=0)
+    {
+        if(r[i]==n-1)
+        {
+            k=0;
+            continue;
+        }
+        j=s[r[i]+1];
+        while(j+k<n&&i+k<n&&ch[i+k]==ch[j+k])
+            k++;
+        lcp[r[i]]=k;
+    }
+   
+}
+int solution()
+{
+   
+    int minValue[t];
+    for(int i=0;i<t;i++)
+    {
+        minValue[i]=0;
+    }
+    int ans=0,tmp=N+1;
+    for(int i=n-1; i>=0; i--)
+    {
+        tmp=N+1;
+        for(int j=0;j<t;j++){
+            if(arr[i].flag==j){
+                minValue[j]=(len[arr[i].flag]-s[i]+1);
+            }
+            else{
+                minValue[j]=min(lcp[i],minValue[j]);
+            }
+            tmp=min(tmp,minValue[j]);
+        }
+        //cout<<tmp<<endl;
+        ans = max(ans,tmp);
+        
+    }
+    return ans;
+}
+int main()
+{
+    int test;
+    scanf("%d",&test);
+    for(int i=1; i<=test; i++)
+    {
+        scanf("%d",&t);
+        for(int j=0; j<t; j++)
+            scanf("%s",ch1[j]);
+
+        buildSuffixArray();
+        buildLCPArray();
+        printf("%d\n",solution());
+
+    }
+    return 0;
+}
+

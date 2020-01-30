@@ -1,0 +1,56 @@
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+
+int main(){
+    int n,h,m,tmp;
+    char ch[5];
+    //freopen("/Users/md.abulkashem/Desktop/ProblemSolving/HackerRankProblemSolution/SWCPractice/SWCPractice/input.txt", "r", stdin);
+    //freopen("/Users/md.abulkashem/Desktop/ProblemSolving/HackerRankProblemSolution/SWCPractice/SWCPractice/output.txt", "w", stdout);
+    scanf("%d",&n);
+    
+    for(int i=0;i<n;i++)
+    {
+        scanf("%s",ch);
+        h=0;
+        for(int i=0;i<2;i++)
+        {
+            tmp=ch[i]-'0';
+            h*=10;
+            h+=tmp;
+        }
+        m=0;
+        for(int i=3;i<=4;i++){
+            tmp=ch[i]-'0';
+            m*=10;
+            m+=tmp;
+        }
+        if(m>0){
+            h=12-h-1;
+            m=60-m;
+        }
+        else{
+            h=12-h;
+        }
+        if (h<0){
+            h=h+12;
+        }
+        if(h==0)
+            h=12;
+        if(h>9){
+            printf("%d:",h);
+        } else {
+            printf("0%d:",h);
+        }
+        if(m>9){
+            printf("%d\n",m);
+        } else {
+            printf("0%d\n",m);
+        }
+       
+    }
+    return 0;
+    
+}
+

@@ -1,0 +1,140 @@
+
+#include <cstdio>
+#include <iostream>
+#define N 2200000
+#define B 23
+using namespace std;
+
+
+struct data{
+    int count,next[2];
+}myMap[N];
+
+int lastIndex,numberArray[B],numberS,cmpValue[B];
+
+void generateBitValue(int value,int type){
+    if(type){
+        for(int i=B-1;i>=0;i--){
+            numberArray[i]=value&1;
+            value=value>>1;
+        }
+    }else{
+        for(int i=B-1;i>=0;i--){
+            cmpValue[i]=value&1;
+            value=value>>1;
+        }
+    }
+}
+
+void createNewNode(){
+    for(int i=0;i<2;i++){
+        myMap[lastIndex].next[i]=-1;
+    }
+    myMap[lastIndex].count=0;
+}
+
+void insertTri(int value){
+    generateBitValue(value,1);
+    int tmp,current=0;
+    for(int i=0;i<B;i++){
+        tmp=numberArray[i];
+        if(myMap[current].next[tmp]==-1){
+            myMap[current].next[tmp]=++lastIndex;
+            createNewNode();
+        }
+        myMap[current].count++;
+        current = myMap[current].next[tmp];
+    }
+    myMap[current].count++;
+}
+
+void resetTri(){
+    lastIndex = 0;
+    createNewNode();
+}
+
+int searchTri(int value){
+    generateBitValue(value, 1);
+    int current = 0,mCount = 0,tmp;
+    for(int i=0;i<B;i++){
+        if(cmpValue[i]==1){
+            if(numberArray[i]==0){
+                if(myMap[current].next[1]==-1){
+                    mCount += myMap[current].count;
+                    break;
+                } else{
+                    if(myMap[current].next[0]!=-1){
+                        tmp = myMap[current].next[0];
+                        mCount += myMap[tmp].count;
+                    }
+                    current = myMap[current].next[1];
+                }
+                
+            } else {
+                if(myMap[current].next[0]==-1){
+                    mCount += myMap[current].count;
+                    break;
+                } else{
+                    if(myMap[current].next[1]!=-1){
+                        tmp = myMap[current].next[1];
+                        mCount += myMap[tmp].count;
+                    }
+                    current = myMap[current].next[0];
+                }
+            }
+            
+        } else {
+            if(numberArray[i]==0){
+                if(myMap[current].next[0]==-1){
+                    break;
+                } else {
+                    current = myMap[current].next[0];
+                }
+            } else {
+                if(myMap[current].next[1]==-1){
+                    break;
+                } else{
+                    current = myMap[current].next[1];
+                }
+            }
+            
+        }
+    }
+    return mCount;
+}
+
+int main(){
+    int t,n,k,val,xr=0,tmp;
+    long long ans =0;
+    scanf("%d",&t);
+    while(t--){
+        scanf("%d %d",&n,&k);
+        generateBitValue(k, 0);
+        resetTri();
+        //insertTri(0);
+        ans = 0;
+        for(int i=0;i<n;i++){
+            scanf("%d",&val);
+            
+            if(i==0){
+                xr=val;
+                if(val<k){
+                    ans ++;
+                }
+                insertTri(val);
+            } else {
+                
+                xr = xr ^ val;
+                //insertTri(xr);
+                tmp=searchTri(xr);
+                if(xr<k)ans++;
+                //cout<<tmp<<endl;
+                ans+=tmp;
+                
+                insertTri(xr);
+            }
+        }
+       
+        printf("%lld\n",ans);
+    }
+}

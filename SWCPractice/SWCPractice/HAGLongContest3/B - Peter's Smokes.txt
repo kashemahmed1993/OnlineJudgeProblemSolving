@@ -1,0 +1,21 @@
+#include <iostream>
+
+#include <cstdio>
+
+using namespace std;
+
+int main()
+{
+    int n, k,s,tmp;
+    while (scanf("%d %d", &n, &k) == 2){
+        s = n;
+        while (n >= k){
+            tmp = n / k;
+            s += tmp;
+            n = (n%k);
+            n += tmp;
+            //cout << n << endl;
+        }
+        cout << s << endl;
+    }
+}
