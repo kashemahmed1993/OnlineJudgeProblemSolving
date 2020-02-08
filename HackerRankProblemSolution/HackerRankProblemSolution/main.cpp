@@ -12,79 +12,8 @@
 
 using namespace std;
 
-int n,arr[N],arr1[N],myQueue[N],qSize,qRear;
-
-bool cmpFunction(int a,int b){
-    return arr[a]<=arr[b];
-}
-
-void mergeFunction(int left,int mid,int right){
-    int l1=left,l2=mid+1,i=left;
-    while(l1<=mid&&l2<=right){
-        if(cmpFunction(l1, l2)){
-            arr1[i++]=arr[l1++];
-        }else{
-            arr1[i++]=arr[l2++];
-        }
-    }
-    while(l1<=mid){
-        arr1[i++]=arr[l1++];
-    }
-    while(l2<=right){
-        arr1[i++]=arr[l2++];
-    }
-    for( i=left;i<=right;i++)
-        arr[i]=arr1[i];
-}
-
-void sortFunction(int left,int right){
-    if (left==right) return;
-    int mid=(left+right)>>1;
-    sortFunction(left, mid);
-    sortFunction(mid+1, right);
-    mergeFunction(left, mid, right);
-}
-
-void resetQueue(){
-    qSize=0;
-    qRear=0;
-}
-
-int maxFunction(int a,int b){
-    return a>b?a:b;
-}
-
-int generateAnswer(){
-    
-    myQueue[qSize++]=arr[0];
-    int ans = 0,tmpValue;
-    for(int i=1;i<n;i++){
-        if(arr[i]-myQueue[qRear]<2){
-            myQueue[qSize++]=arr[i];
-            tmpValue = qSize-qRear;
-            ans = maxFunction(ans, tmpValue);
-        }
-        else {
-            while(qRear<qSize && (arr[i]-myQueue[qRear])>1){
-                qRear++;
-            }
-            myQueue[qSize++]=arr[i];
-        }
-    }
-    
-    return ans;
-}
 
 int main() {
     
-    while(scanf("%d",&n)==1){
-        for(int i=0;i<n;i++){
-            scanf("%d",&arr[i]);
-        }
-        resetQueue();
-        sortFunction(0, n-1);
-        printf("%d\n",generateAnswer());
-        
-    }
     return 0;
 }
