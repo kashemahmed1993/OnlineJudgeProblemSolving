@@ -1,5 +1,3 @@
-//
-//  main.cpp
 //  HackerRankProblemSolution
 //  Problem Name: Cavity Map
 //  Created by Md. Abul Kashem on 25/1/20.
